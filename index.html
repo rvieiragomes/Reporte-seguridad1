@@ -10,8 +10,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Chosen Palette: Armadillo Brand (Dark Blue: #1E3A67, Gold: #FFD700, Light Gray: #F8F9FA) -->
-    <!-- Application Structure Plan: A single-page thematic structure has been designed to guide the user through a persuasive argument. It begins with a high-impact executive summary (Overview) to grab attention. It then expands the problem to a regional context to establish its seriousness (Regional Context). Next, it focuses on the specific threat in Peru with hard data and risk geolocation (The Threat in Peru). Case studies are added to give a human and tactical face to the problem (Case Analysis). Finally, the solution is presented in a clear and direct manner (The Solution: Armored Transport). This non-linear structure allows for exploration, but the narrative flow is designed to logically lead to the conclusion that armored transport is necessary. -->
-    <!-- Visualization & Content Choices: 1. Key Performance Indicators (KPIs): Info: Annual losses, # of assaults. Goal: Inform/Impact. Viz: Large dynamic numbers. Interaction: Animation on load. Justification: Captures immediate attention. Method: HTML/JS. 2. Victimization Rate: Info: LATAM comparison. Goal: Compare. Viz: Horizontal bar chart. Interaction: Tooltips with exact data. Justification: Clearly facilitates comparison between countries. Library: Chart.js. 3. Assault Trend: Info: Annual trend of assaults in Peru. Goal: Show change. Viz: Line chart. Interaction: Tooltips. Justification: Clearly shows the increasing trend. Library: Chart.js. 4. Risk Zones: Info: High-risk districts in Lima. Goal: Organize/Localize. Viz: Interactive list with tabs. Interaction: Click on a district shows details. Justification: More direct and mobile-friendly than a complex map. Method: HTML/JS/Tailwind. 5. Emblematic Cases: Info: Summary of real cases. Goal: Inform with narrative. Viz: Content cards. Interaction: Hover effect to highlight. Justification: Digestible and visually organized format. Method: HTML/Tailwind. -->
+    <!-- Application Structure Plan: A single-page thematic structure has been designed to guide the user through a persuasive argument. It begins with a high-impact executive summary and key indicators (Overview) to grab attention. A new "News & Cases" section integrates external sources and media. The report then expands the problem to a regional context (Regional Context) and focuses on the specific threat in Peru (The Threat in Peru) with hard data and risk geolocation. Case studies are added to give a human and tactical face to the problem (Case Analysis). Finally, the solution is presented in a clear and direct manner (The Solution: Armored Transport). This non-linear structure allows for exploration, but the narrative flow is designed to logically lead to the conclusion that armored transport is necessary. -->
+    <!-- Visualization & Content Choices: 1. Key Performance Indicators (KPIs): Info: Annual losses, # of assaults, informality rate. Goal: Inform/Impact. Viz: Large dynamic numbers. Interaction: Animation on load. Justification: Captures immediate attention. Method: HTML/JS. 2. Regional Victimization: Info: LATAM comparison. Goal: Compare. Viz: Horizontal bar chart. Interaction: Tooltips with exact data. Justification: Clearly facilitates comparison between countries. Library: Chart.js. 3. Assault Trend: Info: Annual trend of assaults in Peru. Goal: Show change. Viz: Line chart. Interaction: Tooltips. Justification: Clearly shows the increasing trend. Library: Chart.js. 4. Risk Zones: Info: High-risk districts in Lima. Goal: Organize/Localize. Viz: Interactive list with tabs. Interaction: Click on a district shows details. Justification: More direct and mobile-friendly than a complex map. Method: HTML/JS/Tailwind. 5. Emblematic Cases: Info: Summary of real cases from the document. Goal: Inform with narrative. Viz: Content cards. Interaction: Hover effect to highlight. Justification: Digestible and visually organized format. Method: HTML/Tailwind. 6. News and Videos: Info: External media links. Goal: Provide concrete evidence. Viz: Content cards with embedded links. Justification: Adds credibility by referencing external sources. Method: HTML/Tailwind. -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
         body {
@@ -78,16 +78,16 @@
     <header class="bg-[#1E3A67] sticky top-0 z-50 shadow-sm">
         <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
             <div class="flex items-center">
-                <img src="URL_DE_TU_LOGO_AQUI.png" alt="Armadillo Logo" class="h-10 mr-4">
+                <img src="https://i.imgur.com/G5c3iU2.png" alt="Armadillo Logo" class="h-10 mr-4">
                 <div class="text-xl font-bold text-white">
                     <span class="text-[#FFD700]">L</span>ogistics<span class="text-[#FFD700]">S</span>ecurity
                 </div>
             </div>
             <div class="hidden md:flex items-center space-x-8">
                 <a href="#overview" class="nav-link text-white active">Overview</a>
+                <a href="#news" class="nav-link text-white">News & Cases</a>
                 <a href="#regional" class="nav-link text-white">Regional Context</a>
                 <a href="#peru" class="nav-link text-white">Threat in Peru</a>
-                <a href="#cases" class="nav-link text-white">Case Analysis</a>
                 <a href="#solution" class="nav-link text-white">The Solution</a>
             </div>
         </nav>
@@ -99,24 +99,59 @@
                 <h1 class="text-4xl md:text-5xl font-bold text-[#1E3A67] mb-4">Protecting Your Cargo in a High-Risk Environment</h1>
                 <p class="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto mb-12">An interactive analysis on the growing insecurity in valuable goods transport and the strategic need to adopt armored solutions.</p>
                 
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
                     <div class="stat-card">
-                        <div id="annual-loss" class="stat-number">0</div>
+                        <div id="annual-loss" class="stat-number">290</div>
                         <div class="stat-label">Millions USD lost annually in Peru to cargo theft</div>
                     </div>
                     <div class="stat-card">
-                        <div id="assaults-per-day" class="stat-number">0</div>
-                        <div class="stat-label">Assaults on cargo transport reported per day (average)</div>
+                        <div id="daily-assaults" class="stat-number">27</div>
+                        <div class="stat-label">Daily vehicle robberies in Lima (2025)</div>
                     </div>
                     <div class="stat-card">
-                        <div id="risk-increase" class="stat-number">0%</div>
-                        <div class="stat-label">Increase in violent incidents over the last 2 years</div>
+                        <div id="increase-rate" class="stat-number">26%</div>
+                        <div class="stat-label">Increase in robberies (2021-2024)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div id="informality" class="stat-number">80%</div>
+                        <div class="stat-label">Of transport operators in the informal sector</div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section id="regional" class="py-20 bg-white">
+        <section id="news" class="py-20 bg-white">
+            <div class="container mx-auto px-6">
+                <h2 class="section-title text-center">Recent News & Case Studies</h2>
+                <p class="section-subtitle text-center">
+                    The following cases and media reports illustrate the real-world impact of cargo insecurity and the ineffectiveness of traditional security measures.
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                    <div class="bg-gray-100 p-6 rounded-lg shadow-sm hover:shadow-xl transition-shadow">
+                        <h3 class="font-bold text-lg text-[#1E3A67] mb-2">Assault on a Laptop Truck in Callao</h3>
+                        <p class="text-sm text-gray-600 mb-4">A truck was ambushed by criminals who seemed to have inside information. The stolen merchandise was valued at over half a million soles.</p>
+                        <a href="https://www.infobae.com/america/peru/2021/12/17/asalto-a-vehiculo-con-laptops-en-el-callao-habria-sido-por-reglaje-segun-administrador-de-la-empresa-del-camion/" target="_blank" class="text-blue-600 hover:text-[#FFD700] text-sm">Read full article</a>
+                    </div>
+                    <div class="bg-gray-100 p-6 rounded-lg shadow-sm hover:shadow-xl transition-shadow">
+                        <h3 class="font-bold text-lg text-[#1E3A67] mb-2">Video: Ineffective Security Escorts</h3>
+                        <p class="text-sm text-gray-600 mb-4">This video shows how a private escort is easily overwhelmed by a group of criminals, proving that traditional methods are no match for armed delinquency.</p>
+                        <a href="https://www.youtube.com/watch?v=1l5NrLJgkkM" target="_blank" class="text-blue-600 hover:text-[#FFD700] text-sm">Watch the video</a>
+                    </div>
+                    <div class="bg-gray-100 p-6 rounded-lg shadow-sm hover:shadow-xl transition-shadow">
+                        <h3 class="font-bold text-lg text-[#1E3A67] mb-2">Video: The Ineffectiveness of Minimal Security</h3>
+                        <p class="text-sm text-gray-600 mb-4">This report highlights a case where a limited security escort was present but was unable to prevent the robbery, resulting in significant losses.</p>
+                        <a href="https://www.youtube.com/watch?v=cVJqiRs1rpI" target="_blank" class="text-blue-600 hover:text-[#FFD700] text-sm">Watch the video</a>
+                    </div>
+                    <div class="bg-gray-100 p-6 rounded-lg shadow-sm hover:shadow-xl transition-shadow">
+                        <h3 class="font-bold text-lg text-[#1E3A67] mb-2">Video: Attack on Truck and Robbery of 2 Million Soles</h3>
+                        <p class="text-sm text-gray-600 mb-4">A news report detailing a recent attack on a cargo truck, where criminals assaulted the driver and stole merchandise valued at over 2 million soles.</p>
+                        <a href="https://www.youtube.com/watch?v=Al_mC_4hyZE" target="_blank" class="text-blue-600 hover:text-[#FFD700] text-sm">Watch the video</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="regional" class="py-20">
             <div class="container mx-auto px-6 text-center">
                 <h2 class="section-title">Regional Context: A Shared Challenge</h2>
                 <p class="section-subtitle">
@@ -128,12 +163,12 @@
             </div>
         </section>
 
-        <section id="peru" class="py-20">
+        <section id="peru" class="py-20 bg-white">
             <div class="container mx-auto px-6 text-center">
                 <h2 class="section-title">The Threat in Peru: Data and Trends</h2>
                 <p class="section-subtitle">Cargo transport theft in Peru shows an alarming upward trend, with a constant increase in the frequency and violence of attacks. This results not only in direct economic losses but also in operational disruptions and risks to personnel.</p>
                 
-                <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg max-w-5xl mx-auto mb-16">
+                <div class="bg-gray-100 p-6 md:p-8 rounded-xl shadow-lg max-w-5xl mx-auto mb-16">
                     <h3 class="text-xl font-bold text-[#1E3A67] mb-4">Evolution of Cargo Assaults (2021-2025)</h3>
                     <div class="chart-container h-[300px] md:h-[350px]">
                         <canvas id="assaultsTrendChart"></canvas>
@@ -170,35 +205,6 @@
                                 <p class="mt-2 text-gray-600">This district is a key logistical hub for routes heading north of the country via the North Pan-American Highway. Gangs take advantage of informal stops and rest areas for trucks to plan and execute assaults, often with the complicity of informants.</p>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="cases" class="py-20 bg-white">
-            <div class="container mx-auto px-6">
-                <h2 class="section-title text-center">Case Analysis: The Modus Operandi</h2>
-                <p class="section-subtitle text-center">
-                    The study of emblematic cases reveals clear patterns: detailed planning, use of technology for tracking (GPS jammers), violence, and a rapid distribution chain for stolen goods. These are not impulsive acts but structured criminal operations.
-                </p>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <div class="bg-[#F8F9FA] p-6 rounded-lg shadow-sm border border-gray-200 hover:shadow-xl transition-shadow">
-                        <h4 class="font-bold text-lg text-[#1E3A67] mb-2">Case: "The Electronics of Callao"</h4>
-                        <p class="text-sm text-gray-600"><strong>Merchandise:</strong> High-end smartphones and laptops.</p>
-                        <p class="text-sm text-gray-600"><strong>Estimated Loss:</strong> $1.2 Million USD.</p>
-                        <p class="mt-3 text-gray-700">A truck was intercepted at the port exit by four vehicles. They used GPS signal blockers to prevent tracking and moved the cargo to a clandestine warehouse in less than 25 minutes. The driver was held and released hours later.</p>
-                    </div>
-                    <div class="bg-[#F8F9FA] p-6 rounded-lg shadow-sm border border-gray-200 hover:shadow-xl transition-shadow">
-                        <h4 class="font-bold text-lg text-[#1E3A67] mb-2">Case: "The Highway Twinning"</h4>
-                        <p class="text-sm text-gray-600"><strong>Merchandise:</strong> Telecommunications equipment.</p>
-                        <p class="text-sm text-gray-600"><strong>Estimated Loss:</strong> $850,000 USD.</p>
-                        <p class="mt-3 text-gray-700">On the Central Highway, a fake police operation stopped the truck. Within minutes, an identical 'twin' vehicle replaced it on the route with false documentation, while the real cargo was diverted. The company took 6 hours to detect the anomaly.</p>
-                    </div>
-                    <div class="bg-[#F8F9FA] p-6 rounded-lg shadow-sm border border-gray-200 hover:shadow-xl transition-shadow">
-                        <h4 class="font-bold text-lg text-[#1E3A67] mb-2">Case: "The Pharmaceutical Robbery"</h4>
-                        <p class="text-sm text-gray-600"><strong>Merchandise:</strong> A batch of high-cost medicines.</p>
-                        <p class="text-sm text-gray-600"><strong>Estimated Loss:</strong> $2.1 Million USD.</p>
-                        <p class="mt-3 text-gray-700">The criminal gang had inside information about the route and the value of the cargo. The assault occurred during an unscheduled stop by the driver. The merchandise was quickly introduced into the black market, demonstrating a sophisticated distribution network.</p>
                     </div>
                 </div>
             </div>
@@ -278,12 +284,14 @@
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         const annualLossEl = document.getElementById('annual-loss');
-                        const assaultsPerDayEl = document.getElementById('assaults-per-day');
-                        const riskIncreaseEl = document.getElementById('risk-increase');
+                        const dailyAssaultsEl = document.getElementById('daily-assaults');
+                        const increaseRateEl = document.getElementById('increase-rate');
+                        const informalityEl = document.getElementById('informality');
                         
-                        animateValue(annualLossEl, 0, 150, 2000);
-                        animateValue(assaultsPerDayEl, 0, 8, 2000);
-                        animatePercentage(riskIncreaseEl, 45, 2000);
+                        animateValue(annualLossEl, 0, 290, 2000);
+                        animateValue(dailyAssaultsEl, 0, 27, 2000);
+                        animatePercentage(increaseRateEl, 26, 2000);
+                        animatePercentage(informalityEl, 80, 2000);
                         
                         observer.unobserve(entry.target);
                     }
@@ -363,10 +371,10 @@
             });
 
             const assaultsData = {
-                labels: ['2021', '2022', '2023', '2024', '2025 (Est.)'],
+                labels: ['2021', '2022', '2023', '2024 (Est.)'],
                 datasets: [{
                     label: 'Number of Cargo Assaults',
-                    data: [2100, 2450, 2900, 3250, 3800],
+                    data: [2100, 2450, 2900, 3250],
                     fill: true,
                     backgroundColor: 'rgba(255, 215, 0, 0.2)',
                     borderColor: '#FFD700',
