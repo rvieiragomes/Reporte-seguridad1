@@ -1,17 +1,20 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="es" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Logistics Security Report</title>
+    <title>Informe Interactivo de Seguridad Logística</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Hojas de estilo y scripts de Leaflet.js para el mapa -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIINfQeW38LDRjXlJ+I3hJ6bQn8U1P5z+Bw=" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-2009228834914757-wS-p4G805g02z5-wFfN3k2z-b3S3j6E-9Vz2z-8A9-9A0-3y5-7q6z-d1P4-2p8d-8A32k8d-1z8j-g3D2t5y3z+C43+4F5+3G2p3s2D+...-x2s+b9t32B2f2a7g-b4R+f12v-d1P3+9J1x+8Y3z+d6D+f2s32B2f-2B5g-d5C32v32v-d1T...=" crossorigin=""></script>
     <!-- Chosen Palette: Armadillo Brand (Dark Blue: #1E3A67, Gold: #FFD700, Light Gray: #F8F9FA) -->
-    <!-- Application Structure Plan: A single-page thematic structure has been designed to guide the user through a persuasive argument. It begins with a high-impact executive summary and key indicators (Overview) to grab attention. A new "News & Cases" section integrates external sources and media. The report then expands the problem to a regional context (Regional Context) and focuses on the specific threat in Peru (The Threat in Peru) with hard data and risk geolocation. Case studies are added to give a human and tactical face to the problem (Case Analysis). Finally, the solution is presented in a clear and direct manner (The Solution: Armored Transport). This non-linear structure allows for exploration, but the narrative flow is designed to logically lead to the conclusion that armored transport is necessary. -->
-    <!-- Visualization & Content Choices: 1. Key Performance Indicators (KPIs): Info: Annual losses, # of assaults, informality rate. Goal: Inform/Impact. Viz: Large dynamic numbers. Interaction: Animation on load. Justification: Captures immediate attention. Method: HTML/JS. 2. Regional Victimization: Info: LATAM comparison. Goal: Compare. Viz: Horizontal bar chart. Interaction: Tooltips with exact data. Justification: Clearly facilitates comparison between countries. Library: Chart.js. 3. Assault Trend: Info: Annual trend of assaults in Peru. Goal: Show change. Viz: Line chart. Interaction: Tooltips. Justification: Clearly shows the increasing trend. Library: Chart.js. 4. Risk Zones: Info: High-risk districts in Lima. Goal: Organize/Localize. Viz: Interactive list with tabs. Interaction: Click on a district shows details. Justification: More direct and mobile-friendly than a complex map. Method: HTML/JS/Tailwind. 5. Emblematic Cases: Info: Summary of real cases from the document. Goal: Inform with narrative. Viz: Content cards. Interaction: Hover effect to highlight. Justification: Digestible and visually organized format. Method: HTML/Tailwind. 6. News and Videos: Info: External media links. Goal: Provide concrete evidence. Viz: Content cards with embedded links. Justification: Adds credibility by referencing external sources. Method: HTML/Tailwind. -->
+    <!-- Application Structure Plan: A single-page thematic structure has been designed to guide the user through a persuasive argument. It begins with a high-impact executive summary and key indicators (Overview) to grab attention. A new "News & Cases" section integrates external sources and media. The report then expands the problem to a regional context (Regional Context) and focuses on the specific threat in Peru (The Threat in Peru) with hard data and risk geolocation. A new, dedicated section for Lurín highlights this critical zone using a dashboard/card layout for greater visibility. This section now includes links to recent news cases and an embedded interactive map, allowing for deeper exploration. Finally, the solution is presented in a clear and direct manner (The Solution: Armored Transport). This non-linear structure allows for exploration, but the narrative flow is designed to logically lead to the conclusion that armored transport is necessary. -->
+    <!-- Visualization & Content Choices: 1. Key Performance Indicators (KPIs): Info: Annual losses, # of assaults, informality rate. Goal: Inform/Impact. Viz: Large dynamic numbers. Interaction: Animation on load. Justification: Captures immediate attention. Method: HTML/JS. 2. Regional Victimization: Info: LATAM comparison. Goal: Compare. Viz: Horizontal bar chart. Interaction: Tooltips with exact data. Justification: Clearly facilitates comparison between countries. Library: Chart.js. 3. Assault Trend: Info: Annual trend of assaults in Peru. Goal: Show change. Viz: Line chart. Interaction: Tooltips. Justification: Clearly shows the increasing trend. Library: Chart.js. 4. Risk Zones (Tabs): Info: High-risk districts in Lima. Goal: Organize/Localize. Viz: Interactive list with tabs. Interaction: Click on a district shows details. Justification: More direct and mobile-friendly than a complex map. Method: HTML/JS/Tailwind. 5. Lurín Dashboard: Info: Specific data for Lurín. Goal: Highlight/Detail. Viz: Card-based layout with links and an interactive map. Interaction: Clickable links and a zoomable map with custom markers. Justification: Provides a dedicated, high-impact view for this critical zone with direct access to external sources and a custom visual aid to mark specific risk points and routes. Method: HTML/Tailwind/Leaflet.js. 6. News and Videos: Info: External media links. Goal: Provide concrete evidence. Viz: Content cards with embedded links. Justification: Adds credibility by referencing external sources. Method: HTML/Tailwind. -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
         body {
@@ -71,6 +74,12 @@
             max-width: 800px;
             margin: 0 auto 2.5rem auto;
         }
+        .zone-tab.active {
+            border-bottom-color: #FFD700;
+            color: #1E3A67;
+            font-weight: 600;
+        }
+        #mapid { height: 320px; border-radius: 0.5rem; }
     </style>
 </head>
 <body class="antialiased">
@@ -78,17 +87,18 @@
     <header class="bg-[#1E3A67] sticky top-0 z-50 shadow-sm">
         <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
             <div class="flex items-center">
-                <img src=<img src=<img src="https://i.imgur.com/G5c3iU2.png" alt="Armadillo Logo" class="h-10 mr-4">alt="Armadillo Logo" class="h-10 mr-4">alt="Armadillo Logo" class="h-10 mr-4">" alt="Armadillo Logo" class="h-10 mr-4">
+                <img src="https://i.imgur.com/G5c3iU2.png" alt="Armadillo Logo" class="h-10 mr-4">
                 <div class="text-xl font-bold text-white">
                     <span class="text-[#FFD700]">L</span>ogistics<span class="text-[#FFD700]">S</span>ecurity
                 </div>
             </div>
             <div class="hidden md:flex items-center space-x-8">
-                <a href="#overview" class="nav-link text-white active">Overview</a>
-                <a href="#news" class="nav-link text-white">News & Cases</a>
-                <a href="#regional" class="nav-link text-white">Regional Context</a>
-                <a href="#peru" class="nav-link text-white">Threat in Peru</a>
-                <a href="#solution" class="nav-link text-white">The Solution</a>
+                <a href="#overview" class="nav-link text-white active">Panorama</a>
+                <a href="#news" class="nav-link text-white">Noticias y Casos</a>
+                <a href="#regional" class="nav-link text-white">Contexto Regional</a>
+                <a href="#peru" class="nav-link text-white">Amenaza en Perú</a>
+                <a href="#lurin-dashboard" class="nav-link text-white">Lurín</a>
+                <a href="#solution" class="nav-link text-white">La Solución</a>
             </div>
         </nav>
     </header>
@@ -96,25 +106,25 @@
     <main>
         <section id="overview" class="py-20 md:py-28 text-center">
             <div class="container mx-auto px-6">
-                <h1 class="text-4xl md:text-5xl font-bold text-[#1E3A67] mb-4">Protecting Your Cargo in a High-Risk Environment</h1>
-                <p class="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto mb-12">An interactive analysis on the growing insecurity in valuable goods transport and the strategic need to adopt armored solutions.</p>
+                <h1 class="text-4xl md:text-5xl font-bold text-[#1E3A67] mb-4">Protegiendo su Carga en un Entorno de Alto Riesgo</h1>
+                <p class="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto mb-12">Un análisis interactivo sobre la creciente inseguridad en el transporte de bienes de valor y la necesidad estratégica de adoptar soluciones blindadas.</p>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
                     <div class="stat-card">
                         <div id="annual-loss" class="stat-number">290</div>
-                        <div class="stat-label">Millions USD lost annually in Peru to cargo theft</div>
+                        <div class="stat-label">Millones USD perdidos anualmente en Perú por robo de carga</div>
                     </div>
                     <div class="stat-card">
                         <div id="daily-assaults" class="stat-number">27</div>
-                        <div class="stat-label">Daily vehicle robberies in Lima (2025)</div>
+                        <div class="stat-label">Robos de vehículos diarios en Lima (2025)</div>
                     </div>
                     <div class="stat-card">
                         <div id="increase-rate" class="stat-number">26%</div>
-                        <div class="stat-label">Increase in robberies (2021-2024)</div>
+                        <div class="stat-label">Incremento de robos (2021-2024)</div>
                     </div>
                     <div class="stat-card">
                         <div id="informality" class="stat-number">80%</div>
-                        <div class="stat-label">Of transport operators in the informal sector</div>
+                        <div class="stat-label">De operadores de transporte en la informalidad</div>
                     </div>
                 </div>
             </div>
@@ -122,30 +132,30 @@
 
         <section id="news" class="py-20 bg-white">
             <div class="container mx-auto px-6">
-                <h2 class="section-title text-center">Recent News & Case Studies</h2>
+                <h2 class="section-title text-center">Noticias Recientes y Casos de Estudio</h2>
                 <p class="section-subtitle text-center">
-                    The following cases and media reports illustrate the real-world impact of cargo insecurity and the ineffectiveness of traditional security measures.
+                    Los siguientes casos y reportes mediáticos ilustran el impacto real de la inseguridad en la carga y la ineficacia de las medidas de seguridad tradicionales.
                 </p>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
                     <div class="bg-gray-100 p-6 rounded-lg shadow-sm hover:shadow-xl transition-shadow">
-                        <h3 class="font-bold text-lg text-[#1E3A67] mb-2">Assault on a Laptop Truck in Callao</h3>
-                        <p class="text-sm text-gray-600 mb-4">A truck was ambushed by criminals who seemed to have inside information. The stolen merchandise was valued at over half a million soles.</p>
-                        <a href="https://www.infobae.com/america/peru/2021/12/17/asalto-a-vehiculo-con-laptops-en-el-callao-habria-sido-por-reglaje-segun-administrador-de-la-empresa-del-camion/" target="_blank" class="text-blue-600 hover:text-[#FFD700] text-sm">Read full article</a>
+                        <h3 class="font-bold text-lg text-[#1E3A67] mb-2">Asalto a Camión de Laptops en el Callao</h3>
+                        <p class="text-sm text-gray-600 mb-4">Un camión fue emboscado por delincuentes que parecían tener información interna. La mercadería robada fue valorizada en más de medio millón de soles.</p>
+                        <a href="https://www.infobae.com/america/peru/2021/12/17/asalto-a-vehiculo-con-laptops-en-el-callao-habria-sido-por-reglaje-segun-administrador-de-la-empresa-del-camion/" target="_blank" class="text-blue-600 hover:text-[#FFD700] text-sm">Leer artículo completo</a>
                     </div>
                     <div class="bg-gray-100 p-6 rounded-lg shadow-sm hover:shadow-xl transition-shadow">
-                        <h3 class="font-bold text-lg text-[#1E3A67] mb-2">Video: Ineffective Security Escorts</h3>
-                        <p class="text-sm text-gray-600 mb-4">This video shows how a private escort is easily overwhelmed by a group of criminals, proving that traditional methods are no match for armed delinquency.</p>
-                        <a href="https://www.youtube.com/watch?v=1l5NrLJgkkM" target="_blank" class="text-blue-600 hover:text-[#FFD700] text-sm">Watch the video</a>
+                        <h3 class="font-bold text-lg text-[#1E3A67] mb-2">Video: Ineficacia de Escoltas de Seguridad</h3>
+                        <p class="text-sm text-gray-600 mb-4">Este video muestra cómo una escolta privada es fácilmente superada por un grupo de delincuentes, demostrando que los métodos tradicionales no son suficientes.</p>
+                        <a href="https://www.youtube.com/watch?v=1l5NrLJgkkM" target="_blank" class="text-blue-600 hover:text-[#FFD700] text-sm">Ver el video</a>
                     </div>
                     <div class="bg-gray-100 p-6 rounded-lg shadow-sm hover:shadow-xl transition-shadow">
-                        <h3 class="font-bold text-lg text-[#1E3A67] mb-2">Video: The Ineffectiveness of Minimal Security</h3>
-                        <p class="text-sm text-gray-600 mb-4">This report highlights a case where a limited security escort was present but was unable to prevent the robbery, resulting in significant losses.</p>
-                        <a href="https://www.youtube.com/watch?v=cVJqiRs1rpI" target="_blank" class="text-blue-600 hover:text-[#FFD700] text-sm">Watch the video</a>
+                        <h3 class="font-bold text-lg text-[#1E3A67] mb-2">Video: La Ineficacia de la Seguridad Mínima</h3>
+                        <p class="text-sm text-gray-600 mb-4">Este informe destaca un caso donde una escolta limitada estaba presente pero fue incapaz de prevenir el robo, resultando en pérdidas significativas.</p>
+                        <a href="https://www.youtube.com/watch?v=cVJqiRs1rpI" target="_blank" class="text-blue-600 hover:text-[#FFD700] text-sm">Ver el video</a>
                     </div>
                     <div class="bg-gray-100 p-6 rounded-lg shadow-sm hover:shadow-xl transition-shadow">
-                        <h3 class="font-bold text-lg text-[#1E3A67] mb-2">Video: Attack on Truck and Robbery of 2 Million Soles</h3>
-                        <p class="text-sm text-gray-600 mb-4">A news report detailing a recent attack on a cargo truck, where criminals assaulted the driver and stole merchandise valued at over 2 million soles.</p>
-                        <a href="https://www.youtube.com/watch?v=Al_mC_4hyZE" target="_blank" class="text-blue-600 hover:text-[#FFD700] text-sm">Watch the video</a>
+                        <h3 class="font-bold text-lg text-[#1E3A67] mb-2">Video: Ataque a Camión y Robo de 2 Millones de Soles</h3>
+                        <p class="text-sm text-gray-600 mb-4">Un reportaje sobre un ataque reciente a un camión de carga, donde los criminales asaltaron al conductor y robaron mercancía valorada en más de 2 millones de soles.</p>
+                        <a href="https://www.youtube.com/watch?v=Al_mC_4hyZE" target="_blank" class="text-blue-600 hover:text-[#FFD700] text-sm">Ver el video</a>
                     </div>
                 </div>
             </div>
@@ -153,9 +163,9 @@
 
         <section id="regional" class="py-20">
             <div class="container mx-auto px-6 text-center">
-                <h2 class="section-title">Regional Context: A Shared Challenge</h2>
+                <h2 class="section-title">Contexto Regional: Un Desafío Compartido</h2>
                 <p class="section-subtitle">
-                    Insecurity is not an issue exclusive to Peru. When comparing victimization rates across the region, a complex panorama emerges that demands proactive security measures. Countries with similar economies and challenges, such as Mexico or Brazil, have already normalized the use of specialized transport to mitigate risks.
+                    La inseguridad no es un problema exclusivo de Perú. Al comparar las tasas de victimización en la región, se revela un panorama complejo que exige medidas de seguridad proactivas. Países con economías y desafíos similares, como México o Brasil, ya han normalizado el uso de transporte especializado para mitigar riesgos.
                 </p>
                 <div class="chart-container h-[450px] md:h-[400px]">
                     <canvas id="regionalComparisonChart"></canvas>
@@ -165,44 +175,43 @@
 
         <section id="peru" class="py-20 bg-white">
             <div class="container mx-auto px-6 text-center">
-                <h2 class="section-title">The Threat in Peru: Data and Trends</h2>
-                <p class="section-subtitle">Cargo transport theft in Peru shows an alarming upward trend, with a constant increase in the frequency and violence of attacks. This results not only in direct economic losses but also in operational disruptions and risks to personnel.</p>
+                <h2 class="section-title">La Amenaza en Perú: Datos y Tendencias</h2>
+                <p class="section-subtitle">El robo a transporte de carga en Perú muestra una alarmante tendencia al alza, con un incremento constante en la frecuencia y violencia de los ataques. Esto no solo genera pérdidas económicas directas, sino también disrupciones operativas y riesgos para el personal.</p>
                 
                 <div class="bg-gray-100 p-6 md:p-8 rounded-xl shadow-lg max-w-5xl mx-auto mb-16">
-                    <h3 class="text-xl font-bold text-[#1E3A67] mb-4">Evolution of Cargo Assaults (2021-2025)</h3>
+                    <h3 class="text-xl font-bold text-[#1E3A67] mb-4">Evolución de Asaltos a Carga (2021-2025)</h3>
                     <div class="chart-container h-[300px] md:h-[350px]">
                         <canvas id="assaultsTrendChart"></canvas>
                     </div>
                 </div>
-
                 <div class="mt-20 text-left">
-                     <h3 class="section-title text-center">Critical Risk Zones in Metropolitan Lima</h3>
+                     <h3 class="section-title text-center">Zonas Críticas de Riesgo en Lima Metropolitana</h3>
                      <p class="section-subtitle">
-                        Certain areas, especially entry and exit routes to the capital, concentrate the majority of incidents. Callao, as the main port and gateway to the country, is the epicenter of criminal activity, but the risk extends along the main road axes.
+                        Ciertas áreas, especialmente las rutas de entrada y salida a la capital, concentran la mayoría de incidentes. El Callao, como principal puerto, es el epicentro, pero el riesgo se extiende por los principales ejes viales.
                     </p>
                     <div class="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-2 md:p-4">
                         <div class="flex flex-wrap border-b border-gray-200">
-                            <button data-target="zona-callao" class="zone-tab active text-sm md:text-base font-medium p-3 md:p-4 text-gray-700 hover:text-[#FFD700] focus:outline-none border-b-2 border-transparent">Callao</button>
-                            <button data-target="zona-sjl" class="zone-tab text-sm md:text-base font-medium p-3 md:p-4 text-gray-700 hover:text-[#FFD700] focus:outline-none border-b-2 border-transparent">S.J. de Lurigancho</button>
-                            <button data-target="zona-ate" class="zone-tab text-sm md:text-base font-medium p-3 md:p-4 text-gray-700 hover:text-[#FFD700] focus:outline-none border-b-2 border-transparent">Ate Vitarte</button>
-                             <button data-target="zona-smp" class="zone-tab text-sm md:text-base font-medium p-3 md:p-4 text-gray-700 hover:text-[#FFD700] focus:outline-none border-b-2 border-transparent">San Martín de Porres</button>
+                            <button data-target="zona-callao" class="zone-tab active text-sm md:text-base font-medium p-3 md:p-4 text-gray-700 hover:text-[#1E3A67] focus:outline-none border-b-2 border-transparent">Callao</button>
+                            <button data-target="zona-sjl" class="zone-tab text-sm md:text-base font-medium p-3 md:p-4 text-gray-700 hover:text-[#1E3A67] focus:outline-none border-b-2 border-transparent">S.J. de Lurigancho</button>
+                            <button data-target="zona-ate" class="zone-tab text-sm md:text-base font-medium p-3 md:p-4 text-gray-700 hover:text-[#1E3A67] focus:outline-none border-b-2 border-transparent">Ate Vitarte</button>
+                            <button data-target="zona-smp" class="zone-tab text-sm md:text-base font-medium p-3 md:p-4 text-gray-700 hover:text-[#1E3A67] focus:outline-none border-b-2 border-transparent">San Martín de Porres</button>
                         </div>
                         <div class="p-4 md:p-6">
                             <div id="zona-callao" class="zone-content">
-                                <h4 class="font-bold text-lg text-[#1E3A67]">Callao: Epicenter of Risk</h4>
-                                <p class="mt-2 text-gray-600">As the country's main port, it is the point of greatest vulnerability. Organized gangs operate in the vicinity of the port and airport, intercepting high-value cargo. Avenues Néstor Gambetta, Argentina, and Faucett are considered of maximum danger due to the confluence of trucks and ease of escape.</p>
+                                <h4 class="font-bold text-lg text-[#1E3A67]">Callao: Epicentro del Riesgo</h4>
+                                <p class="mt-2 text-gray-600">Como principal puerto del país, es el punto de mayor vulnerabilidad. Bandas organizadas operan en las inmediaciones del puerto y aeropuerto, interceptando carga de alto valor. Las avenidas Néstor Gambetta, Argentina y Faucett son consideradas de máximo peligro.</p>
                             </div>
                             <div id="zona-sjl" class="zone-content hidden">
-                                <h4 class="font-bold text-lg text-[#1E3A67]">San Juan de Lurigancho: Complexity and Escape</h4>
-                                <p class="mt-2 text-gray-600">Due to its population density and complex network of streets, it is a preferred area for criminals to 'twin' trucks and quickly hide stolen merchandise. Routes connecting to the Central Highway are critical points.</p>
+                                <h4 class="font-bold text-lg text-[#1E3A67]">San Juan de Lurigancho: Complejidad y Escape</h4>
+                                <p class="mt-2 text-gray-600">Por su densidad poblacional y compleja red de calles, es una zona predilecta para que los delincuentes 'gemeleen' camiones y oculten rápidamente la mercadería robada. Las rutas que conectan con la Carretera Central son puntos críticos.</p>
                             </div>
                             <div id="zona-ate" class="zone-content hidden">
-                                <h4 class="font-bold text-lg text-[#1E3A67]">Ate Vitarte: Industrial Corridor</h4>
-                                <p class="mt-2 text-gray-600">Being a key industrial corridor and the main access route to the Central Highway, it presents a high risk. Assaults often occur during high-traffic hours to hinder police response. The interception method using smaller vehicles is common.</p>
+                                <h4 class="font-bold text-lg text-[#1E3A67]">Ate Vitarte: Corredor Industrial</h4>
+                                <p class="mt-2 text-gray-600">Al ser un corredor industrial clave y la principal vía de acceso a la Carretera Central, presenta un alto riesgo. Los asaltos suelen ocurrir en horas de alto tráfico para dificultar la respuesta policial. El método de interceptación con vehículos menores es común.</p>
                             </div>
                             <div id="zona-smp" class="zone-content hidden">
-                                <h4 class="font-bold text-lg text-[#1E3A67]">San Martín de Porres: Northern Connection</h4>
-                                <p class="mt-2 text-gray-600">This district is a key logistical hub for routes heading north of the country via the North Pan-American Highway. Gangs take advantage of informal stops and rest areas for trucks to plan and execute assaults, often with the complicity of informants.</p>
+                                <h4 class="font-bold text-lg text-[#1E3A67]">San Martín de Porres: Conexión Norte</h4>
+                                <p class="mt-2 text-gray-600">Este distrito es un nudo logístico clave para las rutas que se dirigen al norte del país por la Panamericana Norte. Las bandas aprovechan las paradas informales y zonas de descanso de camiones para planificar y ejecutar asaltos.</p>
                             </div>
                         </div>
                     </div>
@@ -210,42 +219,91 @@
             </div>
         </section>
 
+        <section id="lurin-dashboard" class="py-20 md:py-28 bg-gray-100">
+            <div class="container mx-auto px-6 text-center">
+                <h2 class="section-title">Zona Crítica: Lurín</h2>
+                <p class="section-subtitle">
+                    Lurín se ha consolidado como un polo logístico e industrial clave al sur de Lima, sirviendo como la principal entrada y salida para el transporte de carga. Esta vitalidad económica también lo convierte en un objetivo de alto riesgo.
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto text-left">
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="flex items-center mb-3">
+                            <span class="text-2xl mr-3" style="color: #FFD700;">🚧</span>
+                            <h4 class="font-bold text-lg text-[#1E3A67]">Rutas de Mayor Peligro</h4>
+                        </div>
+                        <ul class="list-disc list-inside mt-1 text-gray-600 space-y-2">
+                            <li><strong>Antigua Panamericana Sur:</strong> Tramos con menor iluminación y vigilancia son aprovechados para emboscadas.</li>
+                            <li><strong>Accesos a Parques Industriales:</strong> Puntos críticos donde los delincuentes realizan "reglaje" y ataques.</li>
+                            <li><strong>Av. Industrial y Av. Martir Olaya:</strong> Vías que conectan los centros logísticos y presentan vulnerabilidades.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="flex items-center mb-3">
+                            <span class="text-2xl mr-3" style="color: #FFD700;">🚨</span>
+                            <h4 class="font-bold text-lg text-[#1E3A67]">Casos Recientes</h4>
+                        </div>
+                        <ul class="list-none mt-2 text-gray-600 space-y-3">
+                            <li>
+                                <a href="https://elcomercio.pe/lima/sucesos/capturan-a-banda-de-ladrones-de-camiones-en-lurin-noticia-442801" target="_blank" class="text-blue-600 hover:text-[#FFD700] underline">
+                                    <h5 class="font-medium">Capturan a banda que robaba camiones</h5>
+                                    <p class="text-sm">Noticia sobre la desarticulación de una banda criminal que operaba en la zona sur, dedicada al robo de vehículos de carga.</p>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://peru21.pe/lima/lurin-ladrones-de-camiones-cargados-de-mercaderia-no-se-detienen-y-se-aprovechan-de-la-falta-de-seguridad-en-la-zona-noticia/" target="_blank" class="text-blue-600 hover:text-[#FFD700] underline">
+                                    <h5 class="font-medium">Robos de camiones cargados de mercadería</h5>
+                                    <p class="text-sm">Reporte que detalla cómo la falta de seguridad en Lurín facilita el robo de camiones, afectando a varias empresas de la región.</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md md:col-span-2 lg:col-span-1">
+                        <div class="flex items-center mb-3">
+                            <span class="text-2xl mr-3" style="color: #FFD700;">🗺️</span>
+                            <h4 class="font-bold text-lg text-[#1E3A67]">Mapa de Riesgo</h4>
+                        </div>
+                        <div id="mapid" class="mt-2 w-full"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
         <section id="solution" class="py-20 md:py-28">
             <div class="container mx-auto px-6 text-center">
-                <h2 class="section-title">The Solution: Armored Cargo Transport</h2>
-                <p class="section-subtitle">Faced with this reality, improvisation is not an option. Armored cargo transport is the global standard for protecting high-value assets. It is not an expense but an investment in the continuity and security of your business.</p>
+                <h2 class="section-title">La Solución: Transporte de Carga Blindado</h2>
+                <p class="section-subtitle">Frente a esta realidad, la improvisación no es una opción. El transporte de carga blindado es el estándar global para la protección de activos de alto valor. No es un gasto, sino una inversión en la continuidad y seguridad de su negocio.</p>
                 <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
                     <div class="bg-white p-6 rounded-lg shadow-md">
                          <div class="flex items-center mb-3">
                             <span class="text-2xl mr-3" style="color: #FFD700;">🛡️</span>
-                            <h4 class="font-bold text-lg text-[#1E3A67]">Active Deterrence</h4>
+                            <h4 class="font-bold text-lg text-[#1E3A67]">Disuasión Activa</h4>
                         </div>
-                        <p class="text-gray-600">The mere presence of an armored vehicle deters most criminal organizations, which seek easy targets. It drastically increases the risk and complexity for the attacker.</p>
+                        <p class="text-gray-600">La sola presencia de un vehículo blindado disuade a la mayoría de organizaciones criminales, que buscan blancos fáciles. Aumenta drásticamente el riesgo y la complejidad para el atacante.</p>
                     </div>
                      <div class="bg-white p-6 rounded-lg shadow-md">
                         <div class="flex items-center mb-3">
                              <span class="text-2xl mr-3" style="color: #FFD700;">📦</span>
-                             <h4 class="font-bold text-lg text-[#1E3A67]">Asset Protection</h4>
+                             <h4 class="font-bold text-lg text-[#1E3A67]">Protección del Activo</h4>
                         </div>
-                        <p class="text-gray-600">Cabins and cargo compartments reinforced with ballistic steel and multilayer glass resist attacks, providing vital time for security protocols to react and for reinforcements to arrive.</p>
+                        <p class="text-gray-600">Cabinas y compartimientos de carga reforzados con acero balístico y vidrios multicapa resisten ataques, dando tiempo vital para que los protocolos de seguridad reaccionen.</p>
                     </div>
                      <div class="bg-white p-6 rounded-lg shadow-md">
                         <div class="flex items-center mb-3">
                              <span class="text-2xl mr-3" style="color: #FFD700;">📈</span>
-                            <h4 class="font-bold text-lg text-[#1E3A67]">Operational Continuity</h4>
+                            <h4 class="font-bold text-lg text-[#1E3A67]">Continuidad Operativa</h4>
                         </div>
-                        <p class="text-gray-600">Minimizes the risk of economic losses, stock shortages, and damage to the brand's reputation. It ensures your product reaches its destination, keeping the supply chain intact.</p>
+                        <p class="text-gray-600">Minimiza el riesgo de pérdidas económicas, quiebres de stock y daños a la reputación de la marca. Asegura que su producto llegue a su destino, manteniendo intacta la cadena de suministro.</p>
                     </div>
                 </div>
-                 <a href="#" class="mt-12 inline-block bg-[#FFD700] text-[#1E3A67] font-bold py-3 px-8 rounded-lg hover:bg-yellow-400 transition-colors">Request a Risk Assessment</a>
+                 <a href="#" class="mt-12 inline-block bg-[#FFD700] text-[#1E3A67] font-bold py-3 px-8 rounded-lg hover:bg-yellow-400 transition-colors">Solicitar un Análisis de Riesgo</a>
             </div>
         </section>
     </main>
 
     <footer class="bg-[#1E3A67] border-t border-gray-200">
         <div class="container mx-auto px-6 py-6 text-center text-gray-400">
-            <p>&copy; 2025 Logistics Security Report. All rights reserved.</p>
-            <p class="text-sm mt-1">This is a confidential report prepared for strategic decision-making.</p>
+            <p>&copy; 2025 Informe de Seguridad Logística. Todos los derechos reservados.</p>
+            <p class="text-sm mt-1">Este es un informe confidencial preparado para la toma de decisiones estratégicas.</p>
         </div>
     </footer>
 
@@ -258,7 +316,7 @@
                     if (!startTimestamp) startTimestamp = timestamp;
                     const progress = Math.min((timestamp - startTimestamp) / duration, 1);
                     const value = Math.floor(progress * (end - start) + start);
-                    obj.innerHTML = value.toLocaleString('en-US');
+                    obj.innerHTML = value.toLocaleString('es-ES');
                     if (progress < 1) {
                         window.requestAnimationFrame(step);
                     }
@@ -301,9 +359,9 @@
             observer.observe(document.getElementById('overview'));
 
             const regionalData = {
-                labels: ['Peru', 'Mexico', 'Colombia', 'Brazil', 'Chile', 'Argentina'],
+                labels: ['Perú', 'México', 'Colombia', 'Brasil', 'Chile', 'Argentina'],
                 datasets: [{
-                    label: 'Victimization Rate by Robbery (per 100k pop.)',
+                    label: 'Tasa de Victimización por Robo (por 100k hab.)',
                     data: [1250, 1580, 1390, 1620, 750, 980],
                     backgroundColor: [
                         '#FFD700',
@@ -373,7 +431,7 @@
             const assaultsData = {
                 labels: ['2021', '2022', '2023', '2024 (Est.)'],
                 datasets: [{
-                    label: 'Number of Cargo Assaults',
+                    label: 'Número de Asaltos a Carga',
                     data: [2100, 2450, 2900, 3250],
                     fill: true,
                     backgroundColor: 'rgba(255, 215, 0, 0.2)',
@@ -425,8 +483,8 @@
             const zoneContents = document.querySelectorAll('.zone-content');
             zoneTabs.forEach(tab => {
                 tab.addEventListener('click', () => {
-                    zoneTabs.forEach(t => t.classList.remove('active', 'border-[#FFD700]', 'text-[#FFD700]'));
-                    tab.classList.add('active', 'border-[#FFD700]', 'text-[#FFD700]');
+                    zoneTabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
                     
                     const targetId = tab.dataset.target;
                     zoneContents.forEach(content => {
@@ -438,7 +496,6 @@
                     });
                 });
             });
-            document.querySelector('.zone-tab[data-target="zona-callao"]').classList.add('active', 'border-[#FFD700]', 'text-[#FFD700]');
 
             const navLinks = document.querySelectorAll('.nav-link');
             const sections = document.querySelectorAll('main section');
@@ -458,6 +515,41 @@
                 });
             };
             window.addEventListener('scroll', onScroll);
+
+            // Código para el mapa interactivo de Lurín
+            const map = L.map('mapid').setView([-12.247, -76.84], 14); // Coordenadas centradas en Lurín
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            // Coordenadas de zonas de riesgo y rutas de escape
+            const riskZones = [
+                { coords: [-12.246, -76.846], name: "Zona de Riesgo: Panamericana Sur Antigua" },
+                { coords: [-12.259, -76.845], name: "Zona de Riesgo: Parque Industrial Sur" },
+                { coords: [-12.251, -76.852], name: "Punto de Fuga: Intersección Av. Industrial" }
+            ];
+
+            const escapeRoutes = [
+                [[-12.24, -76.85], [-12.25, -76.85], [-12.25, -76.83], [-12.24, -76.83]]
+            ];
+
+            // Añadir marcadores de zonas de riesgo
+            riskZones.forEach(zone => {
+                L.marker(zone.coords).addTo(map)
+                    .bindPopup(zone.name);
+            });
+
+            // Añadir polilíneas para rutas de escape
+            const polylineOptions = {
+                color: '#FFD700',
+                weight: 5,
+                opacity: 0.8
+            };
+            const polyline = L.polyline(escapeRoutes, polylineOptions).addTo(map);
+
+            // Ajustar el mapa para que se adapte al polilínea
+            map.fitBounds(polyline.getBounds());
         });
     </script>
 </body>
